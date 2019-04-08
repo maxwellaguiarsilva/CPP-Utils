@@ -1,0 +1,78 @@
+/*
+ * File:   main.cpp
+ * Author: Maxwell Aguiar Silva <maxwellaguiarsilva@gmail.com>
+ *
+ * Created on 22 de Janeiro de 2019, 11:05
+ */
+
+#include<iostream>
+#include<Menu.hpp>
+
+
+// Usado para depurar o código.
+static void debug( )
+{
+    static int debug = 0;
+    std::cout << ++debug << std::endl;
+}
+
+// int main( int argc, char** argv )
+int main( int argc, char** argv )
+{
+
+    using namespace std;
+    using cpp_utils::terminal::Menu;
+    using cpp_utils::terminal::TerminalUtils;
+    TerminalUtils &terminal = TerminalUtils::get( );
+
+    //
+    struct MenuColor
+    {
+        const char *color1, *color2;
+        MenuColor( const char *c1, const char *c2 ) : color1( c1 ), color2( c2 ){ };
+    }
+    black_or_white = { terminal.FGCOLOR_BLACK, terminal.BGCOLOR_WHITE },
+    brazil = { terminal.FGCOLOR_GREEN, terminal.BGCOLOR_BLUE },
+    mcdonalds = { terminal.FGCOLOR_YELLOW, terminal.BGCOLOR_RED };
+
+    Menu *menuPtr;
+
+    function < void(const Menu::Item& ) > lambda = [&]( const Menu::Item & item )
+    {
+        cout << terminal.COLOR_RESET
+            << terminal.CLRSCR
+            << "Você selecionou a opção: "
+            << item.getText( );
+        MenuColor &mc = *( MenuColor* ) item.getIdentifier( );
+        menuPtr->setColors( mc.color1, mc.color2 );
+        cin.get( );
+    };
+
+    vector<Menu::Item*> appList;
+    Menu::Item itens[3] = {
+        {
+            "Black or White",
+            &black_or_white,
+            lambda
+        },
+        {
+            "Brazil",
+            &brazil,
+            lambda
+        },
+        {
+            "McDonald's",
+            &mcdonalds,
+            lambda
+        }
+    };
+
+    for( Menu::Item& item : itens )
+        appList.push_back( &item );
+    Menu menu( appList, 5, 5 );
+    menuPtr = &menu;
+    menu.init( );
+
+
+    return 0;
+}
